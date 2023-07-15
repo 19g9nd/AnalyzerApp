@@ -19,3 +19,5 @@ C:\Users\HP\source\repos\AnalyzerApp\AnalyzerApp\obj\Debug\net6.0-windows\refint
 C:\Users\HP\source\repos\AnalyzerApp\AnalyzerApp\obj\Debug\net6.0-windows\AnalyzerApp.pdb
 C:\Users\HP\source\repos\AnalyzerApp\AnalyzerApp\obj\Debug\net6.0-windows\AnalyzerApp.genruntimeconfig.cache
 C:\Users\HP\source\repos\AnalyzerApp\AnalyzerApp\obj\Debug\net6.0-windows\ref\AnalyzerApp.dll
+C:\Users\HP\source\repos\AnalyzerApp\AnalyzerApp\bin\Debug\net6.0-windows\MyFiles\sample1.json
+C:\Users\HP\source\repos\AnalyzerApp\AnalyzerApp\bin\Debug\net6.0-windows\MyFiles\SampleText.txt

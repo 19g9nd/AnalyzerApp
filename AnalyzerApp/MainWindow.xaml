@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="300" Width="400">
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FF00A7FF"/>
+                <GradientStop Color="#FF4E00FF" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -16,14 +22,14 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Content="Files:"/>
+        <Label Content="Files:" Foreground="White"/>
         <ListBox x:Name="FileListBox" Grid.Row="1" Margin="10"/>
 
-        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Margin="5" Minimum="0" Maximum="100" Value="{Binding Progress, Mode=OneWay}" Visibility="Collapsed"/>
-        <Button x:Name="AnalyzeButton" Content="Analyze" Grid.Row="2" Margin="5,25,5,15" Click="AnalyzeButton_Click" Grid.RowSpan="2" Background="#FF09C303" BorderBrush="{x:Null}" Foreground="White"/>
-        <Button x:Name="CancelButton" Content="Cancel" Grid.Row="4" Margin="5,1,5,19" Click="CancelButton_Click" IsEnabled="False" Grid.RowSpan="2"/>
-        <Label x:Name="CharactersLabel"  Grid.Row="5" Margin="0,27,10,-16" Content="ф"/>
-        <Label x:Name="WordsLabel" Grid.Row="5" Margin="0,53,10,-43" Content="ф"/>
-        <Label x:Name="SentencesLabel" Grid.Row="5" Margin="0,85,10,-75" Content="ф"/>
+        <ProgressBar x:Name="ProgressBar" Grid.Row="2" Margin="67,0,67,0" Minimum="0" Maximum="100" Value="{Binding Progress, Mode=OneWay}" Visibility="Visible" Height="18" VerticalAlignment="Center" Background="White"/>
+        <Button x:Name="AnalyzeButton" Content="Analyze" Grid.Row="5" Margin="5,11,5,8" Click="AnalyzeButton_Click" Background="#FF09C303" BorderBrush="{x:Null}" Foreground="White"/>
+        <Button x:Name="CancelButton" Content="Cancel" Grid.Row="5" Margin="5,42,5,-23" Click="CancelButton_Click" IsEnabled="True" Background="#FF00BED6" BorderBrush="{x:Null}" Foreground="White"/>
+        <Label x:Name="CharactersLabel"  Grid.Row="5" Margin="0,60,10,-48"/>
+        <Label x:Name="WordsLabel" Grid.Row="5" Margin="0,86,10,-75"/>
+        <Label x:Name="SentencesLabel" Grid.Row="5" Margin="0,118,10,-107" Content=""/>
     </Grid>
 </Window>

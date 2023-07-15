@@ -40,8 +40,8 @@ namespace AnalyzerApp
                 MessageBox.Show("Folder not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-    
-    private async void AnalyzeButton_Click(object sender, RoutedEventArgs e)
+
+        private async void AnalyzeButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedFile = FileListBox.SelectedItem?.ToString();
             if (selectedFile == null)
@@ -53,35 +53,38 @@ namespace AnalyzerApp
             try
             {
                 cancellationTokenSource = new CancellationTokenSource();
-
-                // Start the analysis in a separate task
                 var analysisTask = AnalyzeFileAsync(selectedFile, cancellationTokenSource.Token);
-
-                // Start the progress bar update task
                 var progressBarTask = UpdateProgressBarAsync(analysisTask, cancellationTokenSource.Token);
 
-                // Wait for the analysis to complete
-                await analysisTask;
+                // Wait for the analysis to complete or be cancelled
+                await Task.WhenAny(analysisTask, progressBarTask);
 
-                // Cancel the progress bar update task if it's still running
-                cancellationTokenSource.Cancel();
-                await progressBarTask;
-            }
-            catch (OperationCanceledException)
-            {
-                // The analysis was cancelled, handle it as needed
-                MessageBox.Show("Analysis cancelled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                // If the analysis task completed, wait for the progress bar update task to finish
+                if (analysisTask.IsCompleted)
+                {
+                    cancellationTokenSource.Cancel();
+                    await progressBarTask;
+                }
+                if (analysisTask.IsCompleted)
+                {
+                    MessageBox.Show("Analysis completed.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else if (analysisTask.IsCanceled)
+                {
+                    MessageBox.Show("Analysis cancelled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
-                // Handle other exceptions
+                // Handle exceptions
                 MessageBox.Show($"An error occurred during analysis: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+
         private async Task AnalyzeFileAsync(string filePath, CancellationToken cancellationToken)
         {
-            var extension = System.IO.Path.GetExtension(filePath);
+            var extension = Path.GetExtension(filePath);
             switch (extension)
             {
                 case ".json":
@@ -105,6 +108,27 @@ namespace AnalyzerApp
                 var words = CountWordsInJsonFile(filePath);
                 var sentences = Regex.Matches(fileContent, @"[.!?]").Count;
 
+                // Calculate progress based on file size
+                double fileSize = new FileInfo(filePath).Length;
+                double progressIncrement = 100.0 / fileSize; //increase progress 
+
+                // Update UI with the analysis results
+                Dispatcher.Invoke(() =>
+                {
+                    ProgressBar.Minimum = 0;
+                    ProgressBar.Maximum = 100;
+                    ProgressBar.Value = 0;
+                });
+
+                for (int i = 0; i < fileSize; i++)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProgressBar.Value += progressIncrement;
+                    });
+                }
                 // Update UI with the analysis results
                 Dispatcher.Invoke(() =>
                 {
@@ -114,6 +138,8 @@ namespace AnalyzerApp
                 });
             }, cancellationToken);
         }
+
+
 
 
         public int CountWordsInJsonFile(string filePath)
@@ -133,6 +159,30 @@ namespace AnalyzerApp
                 var words = fileContent.Split(new[] { ' ', '\t', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries).Length;
                 var sentences = Regex.Matches(fileContent, @"[.!?]").Count;
 
+                var lines = File.ReadAllLines(filePath);
+                int totalLines = lines.Length;
+                double progressIncrement = 100.0 / totalLines;
+
+                // Update UI with the analysis results
+                Dispatcher.Invoke(() =>
+                {
+                    ProgressBar.Minimum = 0;
+                    ProgressBar.Maximum = 100;
+                    ProgressBar.Value = 0;
+                });
+
+                for (int i = 0; i < totalLines; i++)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        break;
+
+                    string line = lines[i];
+                    // Update progress bar
+                    Dispatcher.Invoke(() =>
+                    {
+                        ProgressBar.Value += progressIncrement;
+                    });
+                }
                 // Update UI with the analysis results
                 Dispatcher.Invoke(() =>
                 {
